@@ -41,10 +41,14 @@ export interface Parents {
   groom: {
     father: string;
     mother: string;
+    fatherPhone?: string;
+    motherPhone?: string;
   };
   bride: {
     father: string;
     mother: string;
+    fatherPhone?: string;
+    motherPhone?: string;
   };
 }
 

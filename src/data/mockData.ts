@@ -62,10 +62,14 @@ export const mockWeddingData: WeddingData = {
     groom: {
       father: "심상근",
       mother: "송현숙",
+      fatherPhone: "010-8719-5579",
+      motherPhone: "010-6747-5959",
     },
     bride: {
       father: "전정석",
       mother: "서영순",
+      fatherPhone: "010-3171-8005",
+      motherPhone: "010-4729-5685",
     },
   },
   gallery: getGalleryImages(),

@@ -21,6 +21,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [zoomedImageIndex, setZoomedImageIndex] = useState<number | null>(null);
+  const [isPinching, setIsPinching] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const pinchStateRef = useRef<{ startDistance: number; startZoom: number } | null>(null);
   const zoomLevelRef = useRef(1);
@@ -32,6 +33,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
     setIsModalOpen(true);
     setZoomLevel(1);
     setZoomedImageIndex(null);
+    setIsPinching(false);
     // 스크롤 막기
     document.body.style.overflow = "hidden";
     // 히스토리에 상태 추가 (뒤로가기 대응)
@@ -43,6 +45,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
     setActiveSlideIndex(0);
     setZoomLevel(1);
     zoomLevelRef.current = 1;
+    setIsPinching(false);
     setZoomedImageIndex(null);
     // 스크롤 복원
     document.body.style.overflow = "unset";
@@ -52,6 +55,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
     if (event.touches.length !== 2 || activeSlideIndex !== index) return;
 
     setZoomedImageIndex(index);
+    setIsPinching(true);
 
     const [firstTouch, secondTouch] = Array.from(event.touches);
     pinchStateRef.current = {
@@ -93,6 +97,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
     }
     zoomLevelRef.current = 1;
     setZoomLevel(1);
+    setIsPinching(false);
     setZoomedImageIndex(null);
   };
 
@@ -231,7 +236,9 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
               navigation={true}
               modules={[Pagination, Navigation]}
               className="gallery-modal-swiper"
+              allowTouchMove={!isPinching}
               onSlideChange={(swiper) => {
+                if (isPinching) return;
                 setActiveSlideIndex(swiper.activeIndex);
                 zoomLevelRef.current = 1;
                 setZoomLevel(1);

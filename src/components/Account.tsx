@@ -71,13 +71,25 @@ export const Account: React.FC<AccountProps> = ({ data }) => {
                 <span className="family-label">아버지</span>
                 <span className="family-name">{data.parents.groom.father}</span>
                 <div className="account-actions">
-                  <button type="button" className="icon-btn">
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => handleCall(data.parents.groom.fatherPhone ?? data.groom.phone)}
+                  >
                     <FaPhone />
                   </button>
-                  <button type="button" className="icon-btn">
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => handleSms(data.parents.groom.fatherPhone ?? data.groom.phone)}
+                  >
                     <AiOutlineMessage />
                   </button>
-                  <button type="button" className="icon-btn transfer-icon-btn">
+                  <button
+                    type="button"
+                    className="icon-btn transfer-icon-btn"
+                    onClick={() => copyPrimaryAccount(data.accounts.groom, data.parents.groom.father)}
+                  >
                     <FaWonSign />
                   </button>
                 </div>
@@ -86,13 +98,25 @@ export const Account: React.FC<AccountProps> = ({ data }) => {
                 <span className="family-label">어머니</span>
                 <span className="family-name">{data.parents.groom.mother}</span>
                 <div className="account-actions">
-                  <button type="button" className="icon-btn">
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => handleCall(data.parents.groom.motherPhone ?? data.groom.phone)}
+                  >
                     <FaPhone />
                   </button>
-                  <button type="button" className="icon-btn">
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => handleSms(data.parents.groom.motherPhone ?? data.groom.phone)}
+                  >
                     <AiOutlineMessage />
                   </button>
-                  <button type="button" className="icon-btn transfer-icon-btn">
+                  <button
+                    type="button"
+                    className="icon-btn transfer-icon-btn"
+                    onClick={() => copyPrimaryAccount(data.accounts.groom, data.parents.groom.mother)}
+                  >
                     <FaWonSign />
                   </button>
                 </div>
@@ -137,13 +161,25 @@ export const Account: React.FC<AccountProps> = ({ data }) => {
                 <span className="family-label">아버지</span>
                 <span className="family-name">{data.parents.bride.father}</span>
                 <div className="account-actions">
-                  <button type="button" className="icon-btn">
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => handleCall(data.parents.bride.fatherPhone ?? data.bride.phone)}
+                  >
                     <FaPhone />
                   </button>
-                  <button type="button" className="icon-btn">
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => handleSms(data.parents.bride.fatherPhone ?? data.bride.phone)}
+                  >
                     <AiOutlineMessage />
                   </button>
-                  <button type="button" className="icon-btn transfer-icon-btn">
+                  <button
+                    type="button"
+                    className="icon-btn transfer-icon-btn"
+                    onClick={() => copyPrimaryAccount(data.accounts.bride, data.parents.bride.father)}
+                  >
                     <FaWonSign />
                   </button>
                 </div>
@@ -152,13 +188,25 @@ export const Account: React.FC<AccountProps> = ({ data }) => {
                 <span className="family-label">어머니</span>
                 <span className="family-name">{data.parents.bride.mother}</span>
                 <div className="account-actions">
-                  <button type="button" className="icon-btn">
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => handleCall(data.parents.bride.motherPhone ?? data.bride.phone)}
+                  >
                     <FaPhone />
                   </button>
-                  <button type="button" className="icon-btn">
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    onClick={() => handleSms(data.parents.bride.motherPhone ?? data.bride.phone)}
+                  >
                     <AiOutlineMessage />
                   </button>
-                  <button type="button" className="icon-btn transfer-icon-btn">
+                  <button
+                    type="button"
+                    className="icon-btn transfer-icon-btn"
+                    onClick={() => copyPrimaryAccount(data.accounts.bride, data.parents.bride.mother)}
+                  >
                     <FaWonSign />
                   </button>
                 </div>
