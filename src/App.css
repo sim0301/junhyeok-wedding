@@ -610,6 +610,10 @@ section {
   padding: 0;
 }
 
+.modal-image-container.modal-image-container-landscape {
+  min-height: calc(100vh - 88px);
+}
+
 .modal-image {
   display: block;
   width: auto;

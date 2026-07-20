@@ -19,13 +19,17 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [startLoading, setStartLoading] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
+  const [zoomedImageIndex, setZoomedImageIndex] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const pinchStateRef = useRef<{ startDistance: number; startZoom: number } | null>(null);
 
   const openModal = (index: number) => {
     setInitialSlide(index);
+    setActiveSlideIndex(index);
     setIsModalOpen(true);
     setZoomLevel(1);
+    setZoomedImageIndex(null);
     // 스크롤 막기
     document.body.style.overflow = "hidden";
     // 히스토리에 상태 추가 (뒤로가기 대응)
@@ -34,13 +38,17 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setActiveSlideIndex(0);
     setZoomLevel(1);
+    setZoomedImageIndex(null);
     // 스크롤 복원
     document.body.style.overflow = "unset";
   };
 
-  const handleImageTouchStart = (event: React.TouchEvent<HTMLImageElement>) => {
-    if (event.touches.length !== 2) return;
+  const handleImageTouchStart = (event: React.TouchEvent<HTMLImageElement>, index: number) => {
+    if (event.touches.length !== 2 || activeSlideIndex !== index) return;
+
+    setZoomedImageIndex(index);
 
     const [firstTouch, secondTouch] = Array.from(event.touches);
     pinchStateRef.current = {
@@ -49,8 +57,8 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
     };
   };
 
-  const handleImageTouchMove = (event: React.TouchEvent<HTMLImageElement>) => {
-    if (event.touches.length !== 2 || !pinchStateRef.current) return;
+  const handleImageTouchMove = (event: React.TouchEvent<HTMLImageElement>, index: number) => {
+    if (event.touches.length !== 2 || activeSlideIndex !== index || !pinchStateRef.current) return;
 
     event.preventDefault();
 
@@ -200,19 +208,28 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
               navigation={true}
               modules={[Pagination, Navigation]}
               className="gallery-modal-swiper"
+              onSlideChange={(swiper) => {
+                setActiveSlideIndex(swiper.activeIndex);
+                setZoomLevel(1);
+                setZoomedImageIndex(null);
+              }}
             >
               {data.gallery.map((image, index) => (
                 <SwiperSlide key={image.id}>
-                  <div className="modal-image-container">
+                  <div
+                    className={`modal-image-container${index === 0 || index === 4 ? " modal-image-container-landscape" : ""}`}
+                  >
                     <img
                       src={image.url}
                       alt={image.alt}
                       className={`modal-image${index === 0 || index === 4 ? " modal-image-landscape" : ""}`}
-                      onTouchStart={handleImageTouchStart}
-                      onTouchMove={handleImageTouchMove}
+                      onTouchStart={(event) => handleImageTouchStart(event, index)}
+                      onTouchMove={(event) => handleImageTouchMove(event, index)}
                       onTouchEnd={handleImageTouchEnd}
                       onTouchCancel={handleImageTouchEnd}
-                      style={{ transform: `scale(${zoomLevel})` }}
+                      style={{
+                        transform: activeSlideIndex === index && zoomedImageIndex === index ? `scale(${zoomLevel})` : "scale(1)",
+                      }}
                     />
                   </div>
                 </SwiperSlide>
