@@ -23,6 +23,8 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
   const [zoomedImageIndex, setZoomedImageIndex] = useState<number | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const pinchStateRef = useRef<{ startDistance: number; startZoom: number } | null>(null);
+  const zoomLevelRef = useRef(1);
+  const animationFrameRef = useRef<number | null>(null);
 
   const openModal = (index: number) => {
     setInitialSlide(index);
@@ -40,6 +42,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
     setIsModalOpen(false);
     setActiveSlideIndex(0);
     setZoomLevel(1);
+    zoomLevelRef.current = 1;
     setZoomedImageIndex(null);
     // 스크롤 복원
     document.body.style.overflow = "unset";
@@ -53,7 +56,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
     const [firstTouch, secondTouch] = Array.from(event.touches);
     pinchStateRef.current = {
       startDistance: Math.hypot(secondTouch.clientX - firstTouch.clientX, secondTouch.clientY - firstTouch.clientY),
-      startZoom: zoomLevel,
+      startZoom: zoomLevelRef.current,
     };
   };
 
@@ -69,12 +72,26 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
 
     const scaleFactor = currentDistance / pinchStateRef.current.startDistance;
     const nextZoom = pinchStateRef.current.startZoom * scaleFactor;
+    const clampedZoom = Math.min(3, Math.max(1, Number(nextZoom.toFixed(2))));
 
-    setZoomLevel(Math.min(3, Math.max(1, Number(nextZoom.toFixed(2)))));
+    if (animationFrameRef.current) {
+      window.cancelAnimationFrame(animationFrameRef.current);
+    }
+
+    animationFrameRef.current = window.requestAnimationFrame(() => {
+      zoomLevelRef.current = clampedZoom;
+      setZoomLevel(clampedZoom);
+      animationFrameRef.current = null;
+    });
   };
 
   const handleImageTouchEnd = () => {
     pinchStateRef.current = null;
+    if (animationFrameRef.current) {
+      window.cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+    zoomLevelRef.current = 1;
     setZoomLevel(1);
     setZoomedImageIndex(null);
   };
@@ -216,6 +233,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
               className="gallery-modal-swiper"
               onSlideChange={(swiper) => {
                 setActiveSlideIndex(swiper.activeIndex);
+                zoomLevelRef.current = 1;
                 setZoomLevel(1);
                 setZoomedImageIndex(null);
               }}
@@ -235,6 +253,8 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
                       onTouchCancel={handleImageTouchEnd}
                       style={{
                         transform: activeSlideIndex === index && zoomedImageIndex === index ? `scale(${zoomLevel})` : "scale(1)",
+                        transition: activeSlideIndex === index && zoomedImageIndex === index && zoomLevel > 1 ? "none" : "transform 0.16s ease-out",
+                        willChange: "transform",
                       }}
                     />
                   </div>

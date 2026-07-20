@@ -30,9 +30,9 @@ export const Account: React.FC<AccountProps> = ({ data }) => {
   return (
     <section id="account" className="account-section">
       <div className="account-hero">
-        <h2 className="section-title">마음 전하실 곳</h2>
+        <h2 className="section-title">ACCOUNT</h2>
       </div>
-      <p id="account-subtitle" className="section-subtitle"></p>
+      <p id="account-subtitle" className="section-subtitle">마음 전하실 곳</p>
 
       <div className="account-content">
         <div className="account-column">
