@@ -1,0 +1,13 @@
+name = "wedding"
+compatibility_date = "2026-06-04"
+
+# Pages 함수를 위한 설정
+[env.production]
+d1_databases = [
+  { binding = "db", database_name = "my_wedding", database_id = "f6fcae2c-46c6-4d3a-b141-9f517defb4d2" }
+]
+
+[[d1_databases]]
+binding = "db"
+database_name = "my_wedding"
+database_id = "f6fcae2c-46c6-4d3a-b141-9f517defb4d2"

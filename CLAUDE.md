@@ -1,0 +1,68 @@
+# WEDDING 개발 규칙 (Claude Code)
+
+## 프로젝트 개요
+모바일 청첩장 웹사이트. 결혼 청첩장 비용 절감을 위해 직접 개발한 사이트.
+
+**Live URL**: https://junhyeok-wedding.dev/
+
+---"
+
+## 기본 원칙
+- 모든 대화와 코드 주석은 한국어로 작성
+- TypeScript 타입 안전성 준수
+- 모바일 우선 반응형 디자인
+- 기존 스타일/패턴 유지
+
+---
+
+## 기술 스택
+
+| 분류 | 기술 |
+|------|------|
+| Build Tool | **Vite 7** |
+| Framework | React 19 |
+| Language | TypeScript 5.9 |
+| Styling | CSS + Styled Components + Framer Motion |
+| Animation | Framer Motion, React Snowfall |
+| UI | Swiper (갤러리), React Icons, QRCode.react |
+| Hosting | Cloudflare Pages |
+| Backend | Cloudflare Workers Functions |
+| Database | Cloudflare D1 (SQLite) |
+| Storage | Cloudflare R2 |
+| AI Chatbot | Groq API (Llama 3.3) |
+
+---
+
+### 반응형 브레이크포인트
+```css
+/* Desktop */
+@media (max-width: 1024px) { }
+
+/* Tablet */
+@media (max-width: 768px) { }
+
+/* Mobile */
+@media (max-width: 480px) { }
+```
+
+---
+
+## Cloudflare 설정
+
+### wrangler.toml
+```toml
+main = "functions/api/guestbook.ts"
+compatibility_date = "2026-06-04"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "my_wedding"
+database_id = "f6fcae2c-46c6-4d3a-b141-9f517defb4d2"
+```
+
+### 환경변수 (Cloudflare Dashboard)
+```
+GROQ_API_KEY=<Groq API 키>
+```
+
+---
