@@ -231,12 +231,14 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
               spaceBetween={0}
               slidesPerView={1}
               pagination={{
-                clickable: true,
+                clickable: !isPinching,
               }}
-              navigation={true}
+              navigation={!isPinching}
               modules={[Pagination, Navigation]}
-              className="gallery-modal-swiper"
+              className={`gallery-modal-swiper${isPinching ? " is-pinching" : ""}`}
               allowTouchMove={!isPinching}
+              allowSlideNext={!isPinching}
+              allowSlidePrev={!isPinching}
               onSlideChange={(swiper) => {
                 if (isPinching) return;
                 setActiveSlideIndex(swiper.activeIndex);

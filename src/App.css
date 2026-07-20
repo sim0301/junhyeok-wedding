@@ -658,6 +658,13 @@ section {
   bottom: 30px;
 }
 
+.gallery-modal-swiper.is-pinching .swiper-button-next,
+.gallery-modal-swiper.is-pinching .swiper-button-prev,
+.gallery-modal-swiper.is-pinching .swiper-pagination {
+  pointer-events: none;
+  opacity: 0.35;
+}
+
 .gallery-modal-swiper .swiper-pagination-bullet {
   background-color: white;
   opacity: 0.5;
@@ -1533,24 +1540,38 @@ section {
     padding: 12px 12px;
   }
 
-  .account-person,
-  .family-person {
+  .account-person {
     flex-wrap: nowrap;
     gap: 8px;
   }
 
+  .family-person {
+    flex-wrap: nowrap;
+    gap: 6px;
+    align-items: center;
+    min-width: 0;
+  }
+
   .family-label {
-    min-width: 50px;
+    min-width: 46px;
     font-size: 13px;
+    flex-shrink: 0;
   }
 
   .family-name {
     margin-left: 0;
+    flex: 1 1 auto;
+    min-width: 0;
     font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .account-actions {
     gap: 6px;
+    margin-left: auto;
+    flex-shrink: 0;
   }
 
   .icon-btn {
