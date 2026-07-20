@@ -91,7 +91,7 @@ export const mockWeddingData: WeddingData = {
       {
         holder: "심준혁",
         bank: "신한은행",
-        accountNumber: "110-405-016910",
+        accountNumber: "110-405-0169102",
       },
       {
         holder: "송현숙",
