@@ -64,13 +64,19 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
 
     const [firstTouch, secondTouch] = Array.from(event.touches);
     const currentDistance = Math.hypot(secondTouch.clientX - firstTouch.clientX, secondTouch.clientY - firstTouch.clientY);
-    const nextZoom = pinchStateRef.current.startZoom * (currentDistance / pinchStateRef.current.startDistance);
+
+    if (pinchStateRef.current.startDistance <= 0) return;
+
+    const scaleFactor = currentDistance / pinchStateRef.current.startDistance;
+    const nextZoom = pinchStateRef.current.startZoom * scaleFactor;
 
     setZoomLevel(Math.min(3, Math.max(1, Number(nextZoom.toFixed(2)))));
   };
 
   const handleImageTouchEnd = () => {
     pinchStateRef.current = null;
+    setZoomLevel(1);
+    setZoomedImageIndex(null);
   };
 
   // 뒤로가기 버튼 처리
