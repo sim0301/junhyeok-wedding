@@ -18,11 +18,14 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
   const [initialSlide, setInitialSlide] = useState(0);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [startLoading, setStartLoading] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
   const sectionRef = useRef<HTMLElement>(null);
+  const pinchStateRef = useRef<{ startDistance: number; startZoom: number } | null>(null);
 
   const openModal = (index: number) => {
     setInitialSlide(index);
     setIsModalOpen(true);
+    setZoomLevel(1);
     // 스크롤 막기
     document.body.style.overflow = "hidden";
     // 히스토리에 상태 추가 (뒤로가기 대응)
@@ -31,8 +34,35 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setZoomLevel(1);
     // 스크롤 복원
     document.body.style.overflow = "unset";
+  };
+
+  const handleImageTouchStart = (event: React.TouchEvent<HTMLImageElement>) => {
+    if (event.touches.length !== 2) return;
+
+    const [firstTouch, secondTouch] = Array.from(event.touches);
+    pinchStateRef.current = {
+      startDistance: Math.hypot(secondTouch.clientX - firstTouch.clientX, secondTouch.clientY - firstTouch.clientY),
+      startZoom: zoomLevel,
+    };
+  };
+
+  const handleImageTouchMove = (event: React.TouchEvent<HTMLImageElement>) => {
+    if (event.touches.length !== 2 || !pinchStateRef.current) return;
+
+    event.preventDefault();
+
+    const [firstTouch, secondTouch] = Array.from(event.touches);
+    const currentDistance = Math.hypot(secondTouch.clientX - firstTouch.clientX, secondTouch.clientY - firstTouch.clientY);
+    const nextZoom = pinchStateRef.current.startZoom * (currentDistance / pinchStateRef.current.startDistance);
+
+    setZoomLevel(Math.min(3, Math.max(1, Number(nextZoom.toFixed(2)))));
+  };
+
+  const handleImageTouchEnd = () => {
+    pinchStateRef.current = null;
   };
 
   // 뒤로가기 버튼 처리
@@ -171,13 +201,18 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
               modules={[Pagination, Navigation]}
               className="gallery-modal-swiper"
             >
-              {data.gallery.map((image) => (
+              {data.gallery.map((image, index) => (
                 <SwiperSlide key={image.id}>
                   <div className="modal-image-container">
                     <img
                       src={image.url}
                       alt={image.alt}
-                      className="modal-image"
+                      className={`modal-image${index === 0 || index === 4 ? " modal-image-landscape" : ""}`}
+                      onTouchStart={handleImageTouchStart}
+                      onTouchMove={handleImageTouchMove}
+                      onTouchEnd={handleImageTouchEnd}
+                      onTouchCancel={handleImageTouchEnd}
+                      style={{ transform: `scale(${zoomLevel})` }}
                     />
                   </div>
                 </SwiperSlide>

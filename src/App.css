@@ -4,6 +4,12 @@
   box-sizing: border-box;
 }
 
+html, body, #root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
@@ -15,9 +21,16 @@ body {
 }
 
 .app {
+  width: 100%;
   max-width: 100%;
   margin: 0 auto;
   background-color: #fffdfc;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 /* Common Section Styles */
@@ -532,12 +545,14 @@ section {
 /* Modal */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.85);
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.9);
   z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  overflow: hidden;
 }
 
 .modal-close {
@@ -565,8 +580,8 @@ section {
 
 .gallery-swiper-wrapper {
   width: min(100%, 900px);
-  max-width: 100%;
-  max-height: calc(100vh - 80px);
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 24px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -597,11 +612,27 @@ section {
 
 .modal-image {
   display: block;
-  width: 100%;
+  width: auto;
   height: auto;
-  max-width: 100%;
-  max-height: calc(100vh - 80px);
+  max-width: min(100%, calc(100vw - 32px));
+  max-height: calc(100vh - 88px);
   object-fit: contain;
+  object-position: center;
+  transition: transform 0.2s ease;
+  transform-origin: center center;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.modal-image:active {
+  cursor: zoom-out;
+}
+
+.modal-image.modal-image-landscape {
+  width: min(100%, calc(100vw - 32px));
+  height: auto;
+  max-height: calc(100vh - 88px);
 }
 
 .modal-image-placeholder {
@@ -1432,14 +1463,15 @@ section {
 }
 
 .account-content {
+  width: 100%;
   max-width: 100%;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 16px;
   align-items: stretch;
   justify-content: center;
-  padding: 16px 0 24px;
+  padding: 12px 0 20px;
 }
 
 .account-card { padding: 28px 22px; }
@@ -1475,39 +1507,48 @@ section {
 }
 
 @media (max-width: 700px) {
+  section {
+    padding: 36px 12px;
+  }
+
   .account-content {
     grid-template-columns: 1fr;
-    gap: 16px;
-    padding: 12px 0 20px;
+    gap: 12px;
+    padding: 8px 0 16px;
   }
 
   .account-card {
-    padding: 20px 16px;
+    padding: 16px 12px;
   }
 
   .combined-card .account-person,
   .combined-card .family-card {
-    padding: 12px 14px;
+    padding: 12px 12px;
   }
 
+  .account-person,
   .family-person {
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-wrap: nowrap;
+    gap: 8px;
   }
 
   .family-label {
-    min-width: auto;
+    min-width: 50px;
     font-size: 13px;
   }
 
   .family-name {
     margin-left: 0;
-    font-size: 15px;
+    font-size: 14px;
   }
 
   .account-actions {
-    width: 100%;
-    justify-content: flex-end;
+    gap: 6px;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
   }
 }
 
@@ -1524,11 +1565,13 @@ section {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding: 16px 18px;
+  gap: 12px;
+  padding: 14px 16px;
   background-color: #fff;
   border-radius: 20px;
   border: 1px solid #ece6dc;
+  width: 100%;
+  min-width: 0;
 }
 
 .account-name {
@@ -1553,17 +1596,20 @@ section {
 .family-label {
   font-size: 14px;
   color: #7d6a58;
-  min-width: 70px;
+  min-width: 62px;
   font-weight: 600;
+  flex-shrink: 0;
 }
 
 .family-name {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
   font-size: 16px;
   font-weight: 700;
   color: #332b24;
   text-align: left;
   margin-left: 8px;
+  overflow-wrap: anywhere;
 }
 
 /* Improve overall typography and spacing for account area */
@@ -1576,8 +1622,9 @@ section {
 
 .account-actions {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .icon-btn {
