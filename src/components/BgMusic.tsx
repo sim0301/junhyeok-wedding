@@ -42,7 +42,7 @@ export const BgMusic = () => {
   return (
     <div>
       <audio ref={audioRef} loop>
-        <source src="/ihearSymphony.mp3" type="audio/mpeg" />
+        <source src="/BangSsong (방쏭) Feat. Tophyun (탑현) - 하늘만큼 땅만큼.mp3" type="audio/mpeg" />
       </audio>
 
       <button
