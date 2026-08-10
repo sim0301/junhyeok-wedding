@@ -9,14 +9,24 @@ export const R2_CONFIG = {
 // 이미지 파일명 설정
 export const IMAGE_FILES = {
   gallery: [
-    "CSC_4145-.jpg",
-    "CSC_4199-20x30.jpg",
-    "CSC_4270-.jpg",
-    "CSC_4841-.jpg",
-    "CSC_4929-.jpg",
-    "CSC_5214-.jpg",
+    // 흰 드레스
+    "CSC_3961.jpg",
+    "CSC_3909.jpg",
+    "CSC_3968.jpg",
+    "CSC_3932.jpg",
+    // 분홍 드레스
+    "CSC_4199.jpg",
+    "CSC_4552.jpg",
+    "CSC_4270.jpg",
+    "CSC_4306.jpg",
+    // 파랑 드레스
+    "CSC_4670.jpg",
+    "CSC_4687.jpg",
+    "CSC_5047.jpg",
+    "CSC_5140.jpg",
   ],
-  mainHero: "CSC_4199-20x30.jpg",
+
+  mainHero: "CSC_4199.jpg",
 };
 
 // Helper function to build R2 image URL
