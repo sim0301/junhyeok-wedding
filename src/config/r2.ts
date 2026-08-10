@@ -14,18 +14,24 @@ export const IMAGE_FILES = {
     "CSC_3909.jpg",
     "CSC_3968.jpg",
     "CSC_3932.jpg",
+    "CSC_3787.jpg",
+    "CSC_4145.jpg",
     // 분홍 드레스
     "CSC_4199.jpg",
     "CSC_4552.jpg",
     "CSC_4270.jpg",
     "CSC_4306.jpg",
+    "CSC_4339.jpg",
+    "CSC_4407.jpg",
     // 파랑 드레스
     "CSC_4670.jpg",
     "CSC_4687.jpg",
     "CSC_5047.jpg",
     "CSC_5140.jpg",
+    "CSC_5171jpg",
+    "CSC_5214.jpg",
   ],
-
+ 
   mainHero: "CSC_4199.jpg",
 };
 
