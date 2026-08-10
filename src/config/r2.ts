@@ -28,7 +28,7 @@ export const IMAGE_FILES = {
     "CSC_4687.jpg",
     "CSC_5047.jpg",
     "CSC_5140.jpg",
-    "CSC_5171jpg",
+    "CSC_5171.jpg",
     "CSC_5214.jpg",
   ],
  
