@@ -21,6 +21,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [activeSlideIndex, setActiveSlideIndex] = useState(0);
   const [zoomedImageIndex, setZoomedImageIndex] = useState<number | null>(null);
+  const [orientationMap, setOrientationMap] = useState<Record<string, "landscape" | "portrait">>({});
   const [isPinching, setIsPinching] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const pinchStateRef = useRef<{ startDistance: number; startZoom: number } | null>(null);
@@ -144,24 +145,25 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
   useEffect(() => {
     if (!startLoading || data.gallery.length === 0) return;
 
-    // let loadedCount = 0;
-    // const totalImages = data.gallery.length;
+    const preloadImage = async (image: { id: string; url: string }) => {
+      const img = new Image();
 
-    const preloadImage = (url: string) => {
-      return new Promise<void>((resolve) => {
-        const img = new Image();
+      await new Promise<void>((resolve) => {
         img.onload = () => resolve();
         img.onerror = () => resolve(); // 에러가 나도 계속 진행
-        img.src = url;
+        img.src = image.url;
       });
+
+      const orientation = img.naturalWidth > img.naturalHeight ? "landscape" : "portrait";
+      setOrientationMap((prev) => ({
+        ...prev,
+        [image.id]: orientation,
+      }));
     };
 
-    // 모든 이미지를 병렬로 로드
-    Promise.all(data.gallery.map((image) => preloadImage(image.url))).then(
-      () => {
-        setImagesLoaded(true);
-      }
-    );
+    Promise.all(data.gallery.map((image) => preloadImage(image))).then(() => {
+      setImagesLoaded(true);
+    });
   }, [startLoading, data.gallery]);
 
   return (
@@ -247,28 +249,32 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
                 setZoomedImageIndex(null);
               }}
             >
-              {data.gallery.map((image, index) => (
-                <SwiperSlide key={image.id}>
-                  <div
-                    className={`modal-image-container${index === 0 || index === 4 ? " modal-image-container-landscape" : ""}`}
-                  >
-                    <img
-                      src={image.url}
-                      alt={image.alt}
-                      className={`modal-image${index === 0 || index === 4 ? " modal-image-landscape" : ""}`}
-                      onTouchStart={(event) => handleImageTouchStart(event, index)}
-                      onTouchMove={(event) => handleImageTouchMove(event, index)}
-                      onTouchEnd={handleImageTouchEnd}
-                      onTouchCancel={handleImageTouchEnd}
-                      style={{
-                        transform: activeSlideIndex === index && zoomedImageIndex === index ? `scale(${zoomLevel})` : "scale(1)",
-                        transition: activeSlideIndex === index && zoomedImageIndex === index && zoomLevel > 1 ? "none" : "transform 0.16s ease-out",
-                        willChange: "transform",
-                      }}
-                    />
-                  </div>
-                </SwiperSlide>
-              ))}
+              {data.gallery.map((image, index) => {
+                const isLandscape = orientationMap[image.id] === "landscape";
+
+                return (
+                  <SwiperSlide key={image.id}>
+                    <div
+                      className={`modal-image-container${isLandscape ? " modal-image-container-landscape" : ""}`}
+                    >
+                      <img
+                        src={image.url}
+                        alt={image.alt}
+                        className={`modal-image${isLandscape ? " modal-image-landscape" : ""}`}
+                        onTouchStart={(event) => handleImageTouchStart(event, index)}
+                        onTouchMove={(event) => handleImageTouchMove(event, index)}
+                        onTouchEnd={handleImageTouchEnd}
+                        onTouchCancel={handleImageTouchEnd}
+                        style={{
+                          transform: activeSlideIndex === index && zoomedImageIndex === index ? `scale(${zoomLevel})` : "scale(1)",
+                          transition: activeSlideIndex === index && zoomedImageIndex === index && zoomLevel > 1 ? "none" : "transform 0.16s ease-out",
+                          willChange: "transform",
+                        }}
+                      />
+                    </div>
+                  </SwiperSlide>
+                );
+              })}
             </Swiper>
           </div>
         </div>
