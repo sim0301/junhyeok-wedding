@@ -27,6 +27,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
   const pinchStateRef = useRef<{ startDistance: number; startZoom: number } | null>(null);
   const zoomLevelRef = useRef(1);
   const animationFrameRef = useRef<number | null>(null);
+  const preloadedUrlsRef = useRef<Set<string>>(new Set());
 
   const openModal = (index: number) => {
     setInitialSlide(index);
@@ -141,16 +142,41 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
     return () => observer.disconnect();
   }, []);
 
-  // 모든 이미지 미리 로드
+  // 첫 화면에 보이는 이미지 우선 로드 후, 나머지 이미지를 이어서 로드
   useEffect(() => {
     if (!startLoading || data.gallery.length === 0) return;
 
+    const getPriorityOrder = () => {
+      const items = sectionRef.current?.querySelectorAll(".gallery-item") ?? [];
+      const viewportBottom = window.innerHeight + 200;
+      const visibleIndices: number[] = [];
+
+      items.forEach((item, index) => {
+        const rect = item.getBoundingClientRect();
+
+        if (rect.bottom >= 0 && rect.top <= viewportBottom) {
+          visibleIndices.push(index);
+        }
+      });
+
+      const prioritySet = new Set(visibleIndices);
+      const orderedImages = [...visibleIndices, ...data.gallery.map((_, index) => index).filter((index) => !prioritySet.has(index))];
+
+      return orderedImages.map((index) => data.gallery[index]);
+    };
+
     const preloadImage = async (image: { id: string; url: string }) => {
+      if (preloadedUrlsRef.current.has(image.url)) {
+        return;
+      }
+
+      preloadedUrlsRef.current.add(image.url);
+
       const img = new Image();
 
       await new Promise<void>((resolve) => {
         img.onload = () => resolve();
-        img.onerror = () => resolve(); // 에러가 나도 계속 진행
+        img.onerror = () => resolve();
         img.src = image.url;
       });
 
@@ -161,9 +187,20 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
       }));
     };
 
-    Promise.all(data.gallery.map((image) => preloadImage(image))).then(() => {
+    const preloadPriorityImages = async () => {
+      const priorityImages = getPriorityOrder();
+      const remainingImages = data.gallery.filter((image) => !priorityImages.some((priorityImage) => priorityImage.id === image.id));
+
+      await Promise.all(priorityImages.map((image) => preloadImage(image)));
+
+      if (remainingImages.length > 0) {
+        await Promise.all(remainingImages.map((image) => preloadImage(image)));
+      }
+
       setImagesLoaded(true);
-    });
+    };
+
+    preloadPriorityImages();
   }, [startLoading, data.gallery]);
 
   return (
