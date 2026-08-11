@@ -142,13 +142,13 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
     return () => observer.disconnect();
   }, []);
 
-  // 첫 화면에 보이는 이미지 우선 로드 후, 나머지 이미지를 이어서 로드
+  // 모바일 브라우저 호환을 위해, 화면에 보이는 이미지만 선별적으로 준비하고 나머지는 native lazy loading에 맡긴다.
   useEffect(() => {
     if (!startLoading || data.gallery.length === 0) return;
 
     const getPriorityOrder = () => {
       const items = sectionRef.current?.querySelectorAll(".gallery-item") ?? [];
-      const viewportBottom = window.innerHeight + 200;
+      const viewportBottom = window.innerHeight + 250;
       const visibleIndices: number[] = [];
 
       items.forEach((item, index) => {
@@ -159,10 +159,15 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
         }
       });
 
-      const prioritySet = new Set(visibleIndices);
-      const orderedImages = [...visibleIndices, ...data.gallery.map((_, index) => index).filter((index) => !prioritySet.has(index))];
+      if (visibleIndices.length === 0) {
+        return data.gallery.slice(0, 4).map((_, index) => index);
+      }
 
-      return orderedImages.map((index) => data.gallery[index]);
+      const prioritySet = new Set(visibleIndices);
+      const allIndices = data.gallery.map((_, index) => index);
+      const remainingIndices = allIndices.filter((index) => !prioritySet.has(index));
+
+      return [...visibleIndices, ...remainingIndices].slice(0, 12);
     };
 
     const preloadImage = async (image: { id: string; url: string }) => {
@@ -188,15 +193,10 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
     };
 
     const preloadPriorityImages = async () => {
-      const priorityImages = getPriorityOrder();
-      const remainingImages = data.gallery.filter((image) => !priorityImages.some((priorityImage) => priorityImage.id === image.id));
+      const priorityIndices = getPriorityOrder();
+      const priorityImages = priorityIndices.map((index) => data.gallery[index]);
 
       await Promise.all(priorityImages.map((image) => preloadImage(image)));
-
-      if (remainingImages.length > 0) {
-        await Promise.all(remainingImages.map((image) => preloadImage(image)));
-      }
-
       setImagesLoaded(true);
     };
 
@@ -221,7 +221,14 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
             className="gallery-item"
             onClick={() => openModal(index)}
           >
-            <img src={image.url} alt={image.alt} className="gallery-image" />
+            <img
+              src={image.url}
+              alt={image.alt}
+              className="gallery-image"
+              loading="lazy"
+              decoding="async"
+              fetchPriority={index < 2 ? "high" : "auto"}
+            />
           </div>
         ))}
       </div>
