@@ -581,7 +581,8 @@ section {
 .gallery-swiper-wrapper {
   width: min(100%, 900px);
   max-width: calc(100vw - 24px);
-  max-height: calc(100vh - 24px);
+  max-height: calc(var(--vh, 1vh) * 100 - 24px);
+  height: calc(var(--vh, 1vh) * 100 - 24px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -591,7 +592,7 @@ section {
 .gallery-modal-swiper {
   width: 100%;
   max-width: 100%;
-  height: auto;
+  height: 100%;
 }
 
 .gallery-modal-swiper .swiper-slide {
@@ -599,6 +600,7 @@ section {
   align-items: center;
   justify-content: center;
   width: 100% !important;
+  height: 100%;
   min-height: 0;
 }
 
