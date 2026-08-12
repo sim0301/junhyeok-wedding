@@ -611,7 +611,7 @@ section {
 }
 
 .modal-image-container.modal-image-container-landscape {
-  min-height: calc(100vh - 88px);
+  min-height: calc(var(--vh, 1vh) * 100 - 88px);
 }
 
 .modal-image {
@@ -619,7 +619,7 @@ section {
   width: auto;
   height: auto;
   max-width: min(100%, calc(100vw - 32px));
-  max-height: calc(100vh - 88px);
+  max-height: calc(var(--vh, 1vh) * 100 - 88px);
   object-fit: contain;
   object-position: center;
   transition: transform 0.2s ease;
@@ -636,7 +636,7 @@ section {
 .modal-image.modal-image-landscape {
   width: min(100%, calc(100vw - 32px));
   height: auto;
-  max-height: calc(100vh - 88px);
+  max-height: calc(var(--vh, 1vh) * 100 - 88px);
 }
 
 .modal-image-placeholder {

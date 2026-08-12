@@ -142,6 +142,26 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
     return () => observer.disconnect();
   }, []);
 
+  // iOS/인앱 브라우저의 100vh 이슈 대응: 실제 뷰포트 높이를 --vh로 세팅
+  useEffect(() => {
+    const setVh = () => {
+      try {
+        document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
+      } catch (e) {
+        /* ignore */
+      }
+    };
+
+    setVh();
+    window.addEventListener("resize", setVh);
+    window.addEventListener("orientationchange", setVh);
+
+    return () => {
+      window.removeEventListener("resize", setVh);
+      window.removeEventListener("orientationchange", setVh);
+    };
+  }, []);
+
   // 모바일 브라우저 호환을 위해, 화면에 보이는 이미지만 선별적으로 준비하고 나머지는 native lazy loading에 맡긴다.
   useEffect(() => {
     if (!startLoading || data.gallery.length === 0) return;
