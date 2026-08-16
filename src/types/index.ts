@@ -54,7 +54,8 @@ export interface Parents {
 
 export interface GalleryImage {
   id: string;
-  url: string;
+  url: string; // 그리드 썸네일용 (작고 가벼움)
+  fullUrl: string; // 확대(모달)보기용 (크고 선명함)
   srcSet?: string;
   sizes?: string;
   alt: string;

@@ -327,7 +327,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
                       className={`modal-image-container${isLandscape ? " modal-image-container-landscape" : ""}`}
                     >
                       <img
-                        src={image.url}
+                        src={image.fullUrl}
                         alt={image.alt}
                         className={`modal-image${isLandscape ? " modal-image-landscape" : ""}`}
                         onTouchStart={(event) => handleImageTouchStart(event, index)}

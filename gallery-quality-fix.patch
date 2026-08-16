@@ -1,0 +1,88 @@
+diff --git a/src/components/Gallery.tsx b/src/components/Gallery.tsx
+index b438b6e..49da918 100644
+--- a/src/components/Gallery.tsx
++++ b/src/components/Gallery.tsx
+@@ -327,7 +327,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
+                       className={`modal-image-container${isLandscape ? " modal-image-container-landscape" : ""}`}
+                     >
+                       <img
+-                        src={image.url}
++                        src={image.fullUrl}
+                         alt={image.alt}
+                         className={`modal-image${isLandscape ? " modal-image-landscape" : ""}`}
+                         onTouchStart={(event) => handleImageTouchStart(event, index)}
+diff --git a/src/config/r2.ts b/src/config/r2.ts
+index 23b9f6c..8d08bce 100644
+--- a/src/config/r2.ts
++++ b/src/config/r2.ts
+@@ -40,41 +40,23 @@ export const IMAGE_FILES = {
+   mainHeroOptimized: "CSC_4199-hero.jpg",
+ };
+ 
+-const buildOptimizedUrl = (
+-  filename: string,
+-  width: number,
+-  quality = R2_CONFIG.imageTransform.quality,
+-): string => {
+-  const url = `${R2_CONFIG.baseUrl}/${R2_CONFIG.folder}/${filename}`;
+-  return `${url}?format=${R2_CONFIG.imageTransform.format}&quality=${quality}&width=${width}`;
+-};
+-
+ export const getImageUrl = (filename: string): string => {
+   return `${R2_CONFIG.baseUrl}/${R2_CONFIG.folder}/${filename}`;
+ };
+ 
+-export const getOptimizedImageUrl = (
+-  filename: string,
+-  width = R2_CONFIG.imageTransform.width,
+-  quality = R2_CONFIG.imageTransform.quality,
+-): string => {
+-  return buildOptimizedUrl(filename, width, quality);
+-};
+-
+-export const getResponsiveImageSet = (filename: string): string => {
+-  const widthList = [360, 540, 720, 900];
+-
+-  return widthList
+-    .map((width) => `${buildOptimizedUrl(filename, width, 72)} ${width}w`)
+-    .join(", ");
++// 썸네일 파일명 규칙: "CSC_3787.jpg" -> "CSC_3787-thumb.jpg"
++// (그리드용 작은 이미지와 확대보기용 큰 이미지를 별도 파일로 R2에 업로드해서 사용)
++const getThumbFilename = (filename: string): string => {
++  const dotIndex = filename.lastIndexOf(".");
++  if (dotIndex === -1) return `${filename}-thumb`;
++  return `${filename.slice(0, dotIndex)}-thumb${filename.slice(dotIndex)}`;
+ };
+ 
+ export const getGalleryImages = () => {
+   return IMAGE_FILES.gallery.map((filename, index) => ({
+     id: String(index + 1),
+-    url: buildOptimizedUrl(filename, 720, 72),
+-    srcSet: getResponsiveImageSet(filename),
+-    sizes: "(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw",
++    url: getImageUrl(getThumbFilename(filename)), // 그리드용 썸네일 (약 480px, 가볍게)
++    fullUrl: getImageUrl(filename), // 확대(모달)용 (약 1600px, 선명하게)
+     alt: `웨딩 사진 ${index + 1}`,
+   }));
+ };
+@@ -82,5 +64,5 @@ export const getGalleryImages = () => {
+ export const getMainHeroImageUrl = (): string => {
+   const preferredFilename = IMAGE_FILES.mainHeroOptimized || IMAGE_FILES.mainHeroOriginal;
+ 
+-  return buildOptimizedUrl(preferredFilename, 900, 68);
++  return getImageUrl(preferredFilename);
+ };
+diff --git a/src/types/index.ts b/src/types/index.ts
+index cd3a934..f29512b 100644
+--- a/src/types/index.ts
++++ b/src/types/index.ts
+@@ -54,7 +54,8 @@ export interface Parents {
+ 
+ export interface GalleryImage {
+   id: string;
+-  url: string;
++  url: string; // 그리드 썸네일용 (작고 가벼움)
++  fullUrl: string; // 확대(모달)보기용 (크고 선명함)
+   srcSet?: string;
+   sizes?: string;
+   alt: string;
