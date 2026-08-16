@@ -3,7 +3,7 @@
 
 export const R2_CONFIG = {
   baseUrl: "https://pub-c9db72bafd5c492e9e9d4d4d11ef6ed8.r2.dev",
-  folder: "wedding",
+  folder: "wedding-resize",
   imageTransform: {
     format: "auto",
     quality: 72,
