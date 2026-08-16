@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineMessage } from "react-icons/ai";
 import { FaPhone, FaWonSign } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 import type { Account as AccountType, WeddingData } from "../types";
 
 interface AccountProps {
@@ -8,6 +9,8 @@ interface AccountProps {
 }
 
 export const Account: React.FC<AccountProps> = ({ data }) => {
+  const [selectedAccount, setSelectedAccount] = useState<AccountType | null>(null);
+
   const handleCall = (phone: string) => {
     window.location.href = `tel:${phone.replace(/[^0-9+]/g, "")}`;
   };
@@ -21,11 +24,30 @@ export const Account: React.FC<AccountProps> = ({ data }) => {
     alert("계좌번호가 복사되었습니다.");
   };
 
-  const copyPrimaryAccount = (accounts: AccountType[], holder: string) => {
+  const openAccountModal = (accounts: AccountType[], holder: string) => {
     const account = accounts.find((item) => item.holder === holder) ?? accounts[0];
     if (!account) return;
-    copyToClipboard(`${account.bank} ${account.accountNumber}`);
+    setSelectedAccount(account);
+    document.body.style.overflow = "hidden";
+    window.history.pushState({ accountModalOpen: true }, "");
   };
+
+  const closeAccountModal = () => {
+    setSelectedAccount(null);
+    document.body.style.overflow = "unset";
+  };
+
+  // 뒤로가기 버튼으로도 모달이 닫히게 처리
+  useEffect(() => {
+    const handlePopState = () => {
+      if (selectedAccount) {
+        closeAccountModal();
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [selectedAccount]);
 
   return (
     <section id="account" className="account-section">
@@ -58,7 +80,7 @@ export const Account: React.FC<AccountProps> = ({ data }) => {
                 <button
                   type="button"
                   className="icon-btn transfer-icon-btn"
-                  onClick={() => copyPrimaryAccount(data.accounts.groom, data.groom.name)}
+                  onClick={() => openAccountModal(data.accounts.groom, data.groom.name)}
                 >
                   <FaWonSign />
                 </button>
@@ -88,7 +110,7 @@ export const Account: React.FC<AccountProps> = ({ data }) => {
                   <button
                     type="button"
                     className="icon-btn transfer-icon-btn"
-                    onClick={() => copyPrimaryAccount(data.accounts.groom, data.parents.groom.father)}
+                    onClick={() => openAccountModal(data.accounts.groom, data.parents.groom.father)}
                   >
                     <FaWonSign />
                   </button>
@@ -115,7 +137,7 @@ export const Account: React.FC<AccountProps> = ({ data }) => {
                   <button
                     type="button"
                     className="icon-btn transfer-icon-btn"
-                    onClick={() => copyPrimaryAccount(data.accounts.groom, data.parents.groom.mother)}
+                    onClick={() => openAccountModal(data.accounts.groom, data.parents.groom.mother)}
                   >
                     <FaWonSign />
                   </button>
@@ -148,7 +170,7 @@ export const Account: React.FC<AccountProps> = ({ data }) => {
                 <button
                   type="button"
                   className="icon-btn transfer-icon-btn"
-                  onClick={() => copyPrimaryAccount(data.accounts.bride, data.bride.name)}
+                  onClick={() => openAccountModal(data.accounts.bride, data.bride.name)}
                 >
                   <FaWonSign />
                 </button>
@@ -178,7 +200,7 @@ export const Account: React.FC<AccountProps> = ({ data }) => {
                   <button
                     type="button"
                     className="icon-btn transfer-icon-btn"
-                    onClick={() => copyPrimaryAccount(data.accounts.bride, data.parents.bride.father)}
+                    onClick={() => openAccountModal(data.accounts.bride, data.parents.bride.father)}
                   >
                     <FaWonSign />
                   </button>
@@ -205,7 +227,7 @@ export const Account: React.FC<AccountProps> = ({ data }) => {
                   <button
                     type="button"
                     className="icon-btn transfer-icon-btn"
-                    onClick={() => copyPrimaryAccount(data.accounts.bride, data.parents.bride.mother)}
+                    onClick={() => openAccountModal(data.accounts.bride, data.parents.bride.mother)}
                   >
                     <FaWonSign />
                   </button>
@@ -216,6 +238,51 @@ export const Account: React.FC<AccountProps> = ({ data }) => {
         </div>
       </div>
 
+      {selectedAccount && (
+        <div className="account-modal-overlay" onClick={closeAccountModal}>
+          <div
+            className="transfer-modal"
+            role="dialog"
+            aria-modal="true"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="account-modal-close"
+              onClick={closeAccountModal}
+              aria-label="닫기"
+            >
+              <IoClose />
+            </button>
+
+            <div className="transfer-modal-header">
+              <h3 className="account-modal-title">계좌번호</h3>
+              <p className="transfer-modal-subtitle">
+                축하하는 마음을 전해주셔서 감사합니다
+              </p>
+            </div>
+
+            <div className="transfer-modal-list">
+              <div className="transfer-modal-card">
+                <div>
+                  <p className="transfer-modal-bank">{selectedAccount.bank}</p>
+                  <p className="transfer-modal-holder">{selectedAccount.holder}</p>
+                  <p className="transfer-modal-number">{selectedAccount.accountNumber}</p>
+                </div>
+                <button
+                  type="button"
+                  className="transfer-copy-btn"
+                  onClick={() =>
+                    copyToClipboard(`${selectedAccount.bank} ${selectedAccount.accountNumber}`)
+                  }
+                >
+                  복사
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
