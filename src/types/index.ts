@@ -55,6 +55,8 @@ export interface Parents {
 export interface GalleryImage {
   id: string;
   url: string;
+  srcSet?: string;
+  sizes?: string;
   alt: string;
 }
 

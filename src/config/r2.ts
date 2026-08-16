@@ -40,37 +40,47 @@ export const IMAGE_FILES = {
   mainHeroOptimized: "CSC_4199-hero.jpg",
 };
 
-// Helper function to build R2 image URL
+const buildOptimizedUrl = (
+  filename: string,
+  width: number,
+  quality = R2_CONFIG.imageTransform.quality,
+): string => {
+  const url = `${R2_CONFIG.baseUrl}/${R2_CONFIG.folder}/${filename}`;
+  return `${url}?format=${R2_CONFIG.imageTransform.format}&quality=${quality}&width=${width}`;
+};
+
 export const getImageUrl = (filename: string): string => {
   return `${R2_CONFIG.baseUrl}/${R2_CONFIG.folder}/${filename}`;
 };
 
-// Cloudflare R2/Images 기반으로 작은 변형 이미지를 받을 수 있게 해주는 함수
-// 실제로는 메인 이미지를 최적화된 파일로 올려두면 가장 빠르며,
-// 업로드가 안 된 경우에는 원본 파일에 transform 파라미터만 적용해서 우선 동작하게 한다.
 export const getOptimizedImageUrl = (
   filename: string,
   width = R2_CONFIG.imageTransform.width,
   quality = R2_CONFIG.imageTransform.quality,
 ): string => {
-  const url = getImageUrl(filename);
-  return `${url}?format=${R2_CONFIG.imageTransform.format}&quality=${quality}&width=${width}`;
+  return buildOptimizedUrl(filename, width, quality);
 };
 
-// 갤러리 이미지 URL들을 미리 생성
+export const getResponsiveImageSet = (filename: string): string => {
+  const widthList = [360, 540, 720, 900];
+
+  return widthList
+    .map((width) => `${buildOptimizedUrl(filename, width, 72)} ${width}w`)
+    .join(", ");
+};
+
 export const getGalleryImages = () => {
   return IMAGE_FILES.gallery.map((filename, index) => ({
     id: String(index + 1),
-    url: getImageUrl(filename),
+    url: buildOptimizedUrl(filename, 720, 72),
+    srcSet: getResponsiveImageSet(filename),
+    sizes: "(max-width: 480px) 100vw, (max-width: 768px) 50vw, 33vw",
     alt: `웨딩 사진 ${index + 1}`,
   }));
 };
 
-// 메인 히어로 이미지 URL
-// 1) 최적화된 전용 파일이 있으면 그것을 우선 사용
-// 2) 없으면 원본 이미지에 크기/품질 파라미터만 적용해 fallback
 export const getMainHeroImageUrl = (): string => {
   const preferredFilename = IMAGE_FILES.mainHeroOptimized || IMAGE_FILES.mainHeroOriginal;
 
-  return getOptimizedImageUrl(preferredFilename, 900, 72);
+  return buildOptimizedUrl(preferredFilename, 900, 68);
 };

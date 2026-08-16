@@ -214,7 +214,10 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
 
     const preloadPriorityImages = async () => {
       const priorityIndices = getPriorityOrder();
-      const priorityImages = priorityIndices.map((index) => data.gallery[index]);
+      const priorityImages = priorityIndices
+        .slice(0, 4)
+        .map((index) => data.gallery[index])
+        .filter(Boolean);
 
       await Promise.all(priorityImages.map((image) => preloadImage(image)));
       setImagesLoaded(true);
@@ -243,6 +246,8 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
           >
             <img
               src={image.url}
+              srcSet={image.srcSet}
+              sizes={image.sizes}
               alt={image.alt}
               className="gallery-image"
               loading="lazy"
