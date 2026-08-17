@@ -312,7 +312,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
               allowSlidePrev={!isPinching}
               onSlideChange={(swiper) => {
                 if (isPinching) return;
-                setActiveSlideIndex(swiper.activeIndex);
+                setActiveSlideIndex(swiper.realIndex);
                 zoomLevelRef.current = 1;
                 setZoomLevel(1);
                 setZoomedImageIndex(null);

@@ -10,12 +10,12 @@ import "swiper/css/pagination";
 export const Information: React.FC = () => {
   const infoCards = [
     {
-      title: "연회 안내",
-      content: "식사는 뷔페로 진행됩니다.\n예식 전후로 식사 가능합니다.",
+      title: "포토테이블",
+      content: "포토테이블에 놓인 카메라를 보시고 '축하 메시지'를 남겨주세요!",
     },
     {
-      title: "식사 메뉴",
-      content: "한식, 양식, 일식 뷔페\n다양한 메뉴를 준비했습니다.",
+      title: "연회 안내",
+      content: "식사는 뷔페로 진행됩니다.\n예식 전후로 식사 가능합니다.",
     },
   ];
 

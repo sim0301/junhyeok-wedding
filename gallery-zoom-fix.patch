@@ -1,0 +1,31 @@
+diff --git a/src/components/Gallery.tsx b/src/components/Gallery.tsx
+index b438b6e..2bbd90b 100644
+--- a/src/components/Gallery.tsx
++++ b/src/components/Gallery.tsx
+@@ -147,7 +147,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
+     const setVh = () => {
+       try {
+         document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
+-      } catch (e) {
++      } catch {
+         /* ignore */
+       }
+     };
+@@ -312,7 +312,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
+               allowSlidePrev={!isPinching}
+               onSlideChange={(swiper) => {
+                 if (isPinching) return;
+-                setActiveSlideIndex(swiper.activeIndex);
++                setActiveSlideIndex(swiper.realIndex);
+                 zoomLevelRef.current = 1;
+                 setZoomLevel(1);
+                 setZoomedImageIndex(null);
+@@ -327,7 +327,7 @@ export const Gallery: React.FC<GalleryProps> = ({ data }) => {
+                       className={`modal-image-container${isLandscape ? " modal-image-container-landscape" : ""}`}
+                     >
+                       <img
+-                        src={image.url}
++                        src={image.fullUrl}
+                         alt={image.alt}
+                         className={`modal-image${isLandscape ? " modal-image-landscape" : ""}`}
+                         onTouchStart={(event) => handleImageTouchStart(event, index)}

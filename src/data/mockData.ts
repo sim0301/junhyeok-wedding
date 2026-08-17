@@ -52,7 +52,7 @@ export const mockWeddingData: WeddingData = {
       },
       {
         type: "bus",
-        description: "[광역]300(강남역), 8906(범계역), 8106(분당), 1001(고양교통), 1601(홍대)",
+        description: "[광역]9300(강남역), 8906(범계역), 8106(분당), 1001(고양교통), 1601(홍대)",
         text: "상동역8번출구.세이브존 하차",
       },
     ],
