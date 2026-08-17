@@ -1,21 +1,17 @@
-* text=auto
+# 모든 텍스트 파일은 자동으로 줄바꿈을 감지하고
+# 저장소(repo)에는 항상 LF로 저장합니다.
+* text=auto eol=lf
 
-*.ts text eol=lf
-*.tsx text eol=lf
-*.js text eol=lf
-*.jsx text eol=lf
-*.css text eol=lf
-*.json text eol=lf
-*.md text eol=lf
-*.html text eol=lf
-*.toml text eol=lf
-*.yml text eol=lf
-*.yaml text eol=lf
-
+# 이미지, 폰트 등 바이너리 파일은 변환하지 않도록 명시
 *.png binary
 *.jpg binary
 *.jpeg binary
 *.gif binary
-*.webp binary
-*.avif binary
-*.mp3 binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+
+# Windows 전용 스크립트는 CRLF 유지 (필요시)
+*.bat text eol=crlf

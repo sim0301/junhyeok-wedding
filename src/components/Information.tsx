@@ -11,7 +11,7 @@ export const Information: React.FC = () => {
   const infoCards = [
     {
       title: "포토테이블",
-      content: "포토테이블에 놓인 카메라를 보시고 '축하 메시지'를 남겨주세요!",
+      content: "포토테이블에 놓인 카메라를 보시고 \n'축하 메시지'를 남겨주세요!",
     },
     {
       title: "연회 안내",
